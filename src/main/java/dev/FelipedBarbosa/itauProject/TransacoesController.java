@@ -1,4 +1,5 @@
 package dev.FelipedBarbosa.itauProject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,8 +11,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping ("/transacao")
 public class TransacoesController {
 
+    @Autowired
+    private TransacaoService transacaoService;
+
     @PostMapping
-    public ResponseEntity adicionar () {
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity adicionar (@RequestBody TransacaoRequest transacaoRequest  ) {
+
+        try {
+            transacaoService.validarTransacao(transacaoRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (IllegalArgumentException exception){
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+        }
+
     }
 }
